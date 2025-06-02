@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS-Friendly Resume Builder</title>
+    <meta name="robots" content="noindex, nofollow">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Include html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- jQuery Repeater -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+    <style>
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #2c3e50;
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar-brand-icon {
+            height: 30px;
+            margin-right: 10px;
+             /* Placeholder icon if assets/images/curriculum-vitae.png is missing */
+            content: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgY2xhc3M9ImZlYXRoZXIgZmVhdGhlci1maWxlLXRleHQiPjxwYXRoIGQ9Ik0xNCAyaDRhMiAyIDAgMCAxIDIgMnYxNmEyIDIgMCAwIDEtMiAyaC04YTIgMiAwIDAgMS0yLTJWMjZhMiAyIDAgMCAxIDItMnoiPjwvcGF0aD48cG9seWxpbmUgcG9pbnRzPSIxNCAyIDE0IDcgMjEgNyI+PC9wb2x5bGluZT48bGluZSB4MT0iMTYiIHkxPSIxMyIgeDI9IjgiIHkyPSIxMyI+PC9saW5lPjxsaW5lIHgxPSIxNiIgeTE9IjE3IiB4Mj0iOCIgeTI9IjE3Ij48L2xpbmU+PHBvbHlsaW5lIHBvaW50cz0iMTAgOSAxOCA5Ij48L3BvbHlsaW5lPjwvc3ZnPg==');
+        }
+
+        /* Form Elements */
+        .cv-form-blk {
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .cv-form-row-title h3 {
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .cols-2, .cols-3 {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .cols-2:last-child, .cols-3:last-child {
+            margin-bottom: 0;
+        }
+
+        .cols-2 > div, .cols-3 > div {
+            flex: 1;
+        }
+
+        /* Repeater Styles */
+        .repeater {} /* Parent repeater container */
+        .cv-form-row { /* Individual item row */
+            position: relative;
+            padding-right: 40px; /* Space for the remove button */
+            margin-bottom: 15px; /* Space between repeater items */
+            padding-bottom: 15px; /* Space before next item / border */
+            border-bottom: 1px dashed #eee; /* Separator */
+        }
+        /* Last item in a repeater list */
+        /* Select direct child div of repeater, then last data-repeater-item, then its cv-form-row */
+        .repeater > div > [data-repeater-item]:last-child .cv-form-row {
+             border-bottom: none;
+             margin-bottom: 0;
+             padding-bottom: 0;
+        }
+
+
+        .repeater-add-btn, .repeater-remove-btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            line-height: 1; /* Ensure consistent button height */
+        }
+
+        .repeater-add-btn {
+            background-color: #3498db;
+            margin-top: 15px; /* Space above add button */
+        }
+
+        .repeater-remove-btn {
+            background-color: #e74c3c;
+            position: absolute;
+            right: 0;
+            top: 0; /* Align to top of the item for consistency */
+        }
+         .cv-form-row-skills .repeater-remove-btn {
+            top: 25px; /* Adjust if label makes it too high for single input */
+        }
+
+
+        .repeater-add-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .repeater-remove-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Preview Styles */
+         .preview-section-wrapper { /* Wrapper for form and preview */
+            display: flex;
+            gap: 20px;
+        }
+        .form-container {
+            flex: 1;
+            max-width: 55%;
+        }
+        .preview-container {
+            flex: 1;
+            max-width: 45%;
+            position: sticky;
+            top: 20px;
+            align-self: flex-start;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white; /* Added background to preview container */
+        }
+
+        .preview-cnt {
+            display: flex;
+            /* min-height: 10in; /* Approx A4 height - can be removed if using sticky container */
+        }
+
+        .preview-cnt-l { /* Left column */
+            flex: 0 0 35%; /* Fixed width for left column */
+            padding: 25px;
+            background: #34495e; /* Darker blue/grey */
+            color: #ecf0f1; /* Light grey text */
+        }
+
+        .preview-cnt-r { /* Right column */
+            flex: 1; /* Takes remaining space */
+            padding: 25px;
+            /* background: #ffffff; /* Redundant if preview-container has it */
+            color: #333333;
+        }
+
+        .preview-item-name {
+            margin-bottom: 15px; /* Space below name */
+            text-align: center; /* Center name and title */
+        }
+
+        .preview-item-name #fullname_dsp {
+            font-size: 22px;
+            font-weight: 700;
+            display: block;
+            color: #ffffff;
+        }
+        .preview-item-name #designation_dsp {
+            font-size: 16px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #bdc3c7;
+            display: block;
+            margin-top: 3px;
+        }
+
+
+        .preview-item {
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .preview-item i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+            color: #95a5a6;
+        }
+
+        .preview-item-val {
+            display: inline;
+        }
+        #summary_dsp.preview-item-val { /* For the summary text itself */
+             display: block;
+             margin-top: 5px;
+             line-height: 1.5;
+        }
+
+
+        .preview-blk { margin-bottom: 25px; }
+
+        .preview-blk-title h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: inherit;
+            border-bottom: 1px solid;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .preview-cnt-l .preview-blk-title h3 { color: #ecf0f1; border-color: #7f8c8d; }
+        .preview-cnt-r .preview-blk-title h3 { color: #2c3e50; border-color: #bdc3c7; }
+
+
+        .preview-blk-list {}
+
+        /* Right column item styling */
+        .preview-cnt-r .preview-item h4, /* General h4 if used */
+        .achievement-item h4, .education-item h4, .experience-item h4, .project-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #2c3e50;
+        }
+
+        .preview-cnt-r .preview-item p, .preview-cnt-r .preview-item li,
+        .achievement-item p, .education-item p, .experience-item p, .project-item p,
+        .experience-item ul li, .project-item ul li {
+            margin-bottom: 3px;
+            font-size: 13.5px;
+            color: #555;
+            line-height: 1.5;
+        }
+        .experience-item ul, .project-item ul {
+            padding-left: 18px;
+            margin-top: 5px;
+        }
+         .education-item .edu-dates, .experience-item .exp-dates {
+            font-style: italic;
+            font-size: 12.5px;
+            color: #777;
+        }
+
+
+        .skills-items { /* Container for skill tags */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skills-items .skill-tag { /* Individual skill tag */
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12.5px;
+        }
+
+
+        .experience-item, .education-item, .achievement-item, .project-item {
+            margin-bottom: 18px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background-color: #1a252f;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .preview-section-wrapper {
+                flex-direction: column;
+            }
+            .form-container, .preview-container {
+                max-width: 100%;
+            }
+            .preview-container {
+                position: static;
+                max-height: none;
+                overflow-y: visible;
+                margin-top: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            .preview-cnt {
+                flex-direction: column;
+            }
+            .preview-cnt-l {
+                flex-basis: auto;
+            }
+            .cols-2, .cols-3 {
+                flex-direction: column;
+                gap: 0;
+            }
+             .cols-2 > div, .cols-3 > div {
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Print specific styles */
+        @media print {
+            body {
+                background-color: white !important;
+                font-size: 9pt !important;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .navbar, .action-buttons, .form-container, .preview-section-wrapper > .form-container {
+                display: none !important;
+            }
+            .container, .preview-section-wrapper, .preview-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+                position: static !important;
+                border: none !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            .preview-cnt {
+                box-shadow: none !important;
+                padding: 0 !important;
+                min-height: 0 !important;
+                flex-direction: row !important;
+            }
+            .preview-cnt-l {
+                background-color: #34495e !important;
+                color: #ecf0f1 !important;
+                padding: 10mm !important;
+            }
+            .preview-cnt-r {
+                background-color: #ffffff !important;
+                color: #333333 !important;
+                 padding: 10mm !important;
+            }
+
+            .preview-item-name #fullname_dsp { font-size: 18pt !important; }
+            .preview-item-name #designation_dsp { font-size: 12pt !important; }
+            .preview-blk-title h3 { font-size: 11pt !important; }
+            .preview-cnt-r .preview-item h4, .achievement-item h4, .education-item h4, .experience-item h4, .project-item h4 { font-size: 10pt !important; }
+            .preview-item, .preview-cnt-r .preview-item p, .preview-cnt-r .preview-item li, .skills-items .skill-tag { font-size: 8.5pt !important; }
+
+
+            .preview-section, .preview-item, .preview-blk {
+                page-break-inside: avoid !important;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar bg-white">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="brand-and-toggler">
+                    <a href="index.html" class="navbar-brand">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgY2xhc3M9ImZlYXRoZXIgZmVhdGhlci1maWxlLXRleHQiPjxwYXRoIGQ9Ik0xNCAyaDRhMiAyIDAgMCAxIDIgMnYxNmEyIDIgMCAwIDEtMiAyaC04YTIgMiAwIDAgMS0yLTJWMjZhMiAyIDAgMCAxIDItMnoiPjwvcGF0aD48cG9seWxpbmUgcG9pbnRzPSIxNCAyIDE0IDcgMjEgNyI+PC9wb2x5bGluZT48bGluZSB4MT0iMTYiIHkxPSIxMyIgeDI9IjgiIHkyPSIxMyI+PC9saW5lPjxsaW5lIHgxPSIxNiIgeTE9IjE3IiB4Mj0iOCIgeTI9IjE3Ij48L2xpbmU+PHBvbHlsaW5lIHBvaW50cz0iMTAgOSAxOCA5Ij48L3BvbHlsaW5lPjwvc3ZnPg==" alt="" class="navbar-brand-icon">
+                        <span class="navbar-brand-text">ATS Resume <span>Builder</span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="action-buttons">
+            <button class="action-btn" onclick="downloadPDF()">Download PDF</button>
+            <button class="action-btn" onclick="printCV()">Print CV</button>
+        </div>
+
+        <div class="preview-section-wrapper">
+            <div class="form-container">
+                <form action="" class="cv-form" id="cv-form">
+                    <!-- About Section -->
+                    <div class="cv-form-blk">
+                        <div class="cv-form-row-title">
+                            <h3>About</h3>
+                        </div>
+                        <div class="cv-form-row cv-form-row-about"> <!-- This is NOT a repeater item -->
+                            <div class="cols-3">
+                                <div class="form-elem">
+                                    <label for="firstname" class="form-label">First Name</label>
+                                    <input name="firstname" type="text" class="form-control firstname" id="firstname"
+                                        placeholder="e.g. John">
+                                </div>
+                                <div class="form-elem">
+                                    <label for="middlename" class="form-label">Middle Name <span class="opt-text">(optional)</span></label>
+                                    <input name="middlename" type="text" class="form-control middlename" id="middlename"
+                                        placeholder="e.g. Herbert">
+                                </div>
+                                <div class="form-elem">
+                                    <label for="lastname" class="form-label">Last Name</label>
+                                    <input name="lastname" type="text" class="form-control lastname" id="lastname"
+                                        placeholder="e.g. Doe">
+                                </div>
+                            </div>
+
+                            <div class="cols-3">
+                                <div class="form-elem">
+                                    <label for="designation" class="form-label">Designation</label>
+                                    <input name="designation" type="text" class="form-control designation" id="designation"
+                                        placeholder="e.g. Sr. Accountant">
+                                </div>
+                                <div class="form-elem">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input name="address" type="text" class="form-control address" id="address"
+                                        placeholder="e.g. Lake Street-23">
+                                </div>
+                                <div class="form-elem">
+                                     <label for="email" class="form-label">Email</label>
+                                    <input name="email" type="email" class="form-control email" id="email"
+                                        placeholder="e.g. johndoe@gmail.com">
+                                </div>
+                            </div>
+
+                            <div class="cols-2">
+                                <div class="form-elem">
+                                    <label for="phoneno" class="form-label">Phone No:</label>
+                                    <input name="phoneno" type="tel" class="form-control phoneno" id="phoneno"
+                                        placeholder="e.g. 456-768-798">
+                                </div>
+                                <div class="form-elem">
+                                    <label for="linkedin" class="form-label">LinkedIn Profile URL:</label>
+                                    <input name="linkedin" type="url" class="form-control linkedin" id="linkedin"
+                                        placeholder="e.g. linkedin.com/in/yourname">
+                                </div>
+                            </div>
+                             <div class="form-elem">
+                                <label for="summary" class="form-label">Summary</label>
+                                <textarea name="summary" class="form-control summary" id="summary" rows="4"
+                                    placeholder="Briefly describe yourself and career goals."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements Section -->
+                    <div class="cv-form-blk">
+                        <div class="cv-form-row-title">
+                            <h3>Achievements</h3>
+                        </div>
+                        <div class="repeater" id="achievements-repeater">
+                            <div data-repeater-list="achievements">
+                                <div data-repeater-item>
+                                    <div class="cv-form-row cv-form-row-achievement">
+                                        <div class="cols-2">
+                                            <div class="form-elem">
+                                                <label class="form-label">Title</label>
+                                                <input name="achieve_title" type="text" class="form-control achieve_title"
+                                                    placeholder="e.g. Award Winner">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">Description</label>
+                                                <input name="achieve_description" type="text" class="form-control achieve_description"
+                                                    placeholder="e.g. Won award for...">
+                                            </div>
+                                        </div>
+                                        <button data-repeater-delete type="button" class="repeater-remove-btn">-</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" data-repeater-create class="repeater-add-btn">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Experience Section -->
+                    <div class="cv-form-blk">
+                        <div class="cv-form-row-title">
+                            <h3>Experience</h3>
+                        </div>
+                        <div class="repeater" id="experience-repeater">
+                            <div data-repeater-list="experience">
+                                <div data-repeater-item>
+                                    <div class="cv-form-row cv-form-row-experience">
+                                        <div class="cols-3">
+                                            <div class="form-elem">
+                                                <label class="form-label">Title</label>
+                                                <input name="exp_title" type="text" class="form-control exp_title"
+                                                    placeholder="e.g. Software Engineer">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">Company / Organization</label>
+                                                <input name="exp_organization" type="text" class="form-control exp_organization"
+                                                    placeholder="e.g. Google">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">Location</label>
+                                                <input name="exp_location" type="text" class="form-control exp_location"
+                                                    placeholder="e.g. New York, USA">
+                                            </div>
+                                        </div>
+
+                                        <div class="cols-2">
+                                            <div class="form-elem">
+                                                <label class="form-label">Start Date</label>
+                                                <input name="exp_start_date" type="month" class="form-control exp_start_date">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">End Date</label>
+                                                <input name="exp_end_date" type="month" class="form-control exp_end_date">
+                                            </div>
+                                        </div>
+                                        <div class="form-elem">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="exp_description" class="form-control exp_description" rows="4"
+                                                placeholder="Describe your role and achievements. Use bullet points."></textarea>
+                                        </div>
+                                        <button data-repeater-delete type="button" class="repeater-remove-btn">-</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" data-repeater-create class="repeater-add-btn">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Education Section -->
+                    <div class="cv-form-blk">
+                        <div class="cv-form-row-title">
+                            <h3>Education</h3>
+                        </div>
+                        <div class="repeater" id="education-repeater">
+                            <div data-repeater-list="education">
+                                <div data-repeater-item>
+                                    <div class="cv-form-row cv-form-row-education">
+                                        <div class="cols-3">
+                                            <div class="form-elem">
+                                                <label class="form-label">School</label>
+                                                <input name="edu_school" type="text" class="form-control edu_school"
+                                                    placeholder="e.g. Harvard University">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">Degree</label>
+                                                <input name="edu_degree" type="text" class="form-control edu_degree"
+                                                    placeholder="e.g. Bachelor of Science">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">City</label>
+                                                <input name="edu_city" type="text" class="form-control edu_city"
+                                                    placeholder="e.g. Cambridge, MA">
+                                            </div>
+                                        </div>
+
+                                        <div class="cols-2">
+                                            <div class="form-elem">
+                                                <label class="form-label">Start Date</label>
+                                                <input name="edu_start_date" type="month" class="form-control edu_start_date">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">End Date</label>
+                                                <input name="edu_graduation_date" type="month" class="form-control edu_graduation_date">
+                                            </div>
+                                        </div>
+                                        <div class="form-elem">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="edu_description" class="form-control edu_description" rows="3"
+                                                placeholder="Describe your education. e.g. GPA, Honors, relevant coursework"></textarea>
+                                        </div>
+                                        <button data-repeater-delete type="button" class="repeater-remove-btn">-</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" data-repeater-create class="repeater-add-btn">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Projects Section -->
+                    <div class="cv-form-blk">
+                        <div class="cv-form-row-title">
+                            <h3>Projects</h3>
+                        </div>
+                        <div class="repeater" id="projects-repeater">
+                            <div data-repeater-list="projects">
+                                <div data-repeater-item>
+                                    <div class="cv-form-row cv-form-row-project">
+                                        <div class="cols-2">
+                                            <div class="form-elem">
+                                                <label class="form-label">Project Name</label>
+                                                <input name="proj_title" type="text" class="form-control proj_title"
+                                                    placeholder="e.g. E-Commerce Website">
+                                            </div>
+                                            <div class="form-elem">
+                                                <label class="form-label">Project Link</label>
+                                                <input name="proj_link" type="url" class="form-control proj_link"
+                                                    placeholder="e.g. https://example.com">
+                                            </div>
+                                        </div>
+                                        <div class="form-elem">
+                                            <label class="form-label">Description</label>
+                                            <textarea name="proj_description" class="form-control proj_description" rows="3"
+                                                placeholder="Describe your project. Use bullet points."></textarea>
+                                        </div>
+                                        <button data-repeater-delete type="button" class="repeater-remove-btn">-</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" data-repeater-create class="repeater-add-btn">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Skills Section -->
+                    <div class="cv-form-blk">
+                        <div class="cv-form-row-title">
+                            <h3>Skills</h3>
+                        </div>
+                        <div class="repeater" id="skills-repeater">
+                            <div data-repeater-list="skills">
+                                <div data-repeater-item>
+                                    <div class="cv-form-row cv-form-row-skills">
+                                        <div class="form-elem">
+                                            <label class="form-label">Skill</label>
+                                            <input name="skill" type="text" class="form-control skill"
+                                                placeholder="e.g. JavaScript, Python">
+                                        </div>
+                                        <button data-repeater-delete type="button" class="repeater-remove-btn">-</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" data-repeater-create class="repeater-add-btn">+</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-container">
+                <div id="resume-content" class="preview-cnt">
+                    <!-- Left Column -->
+                    <div class="preview-cnt-l">
+                        <div class="preview-blk">
+                            <div class="preview-item preview-item-name">
+                                <span id="fullname_dsp">Your Name</span>
+                                <span id="designation_dsp">Your Title</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-blk" id="about_preview_blk"> <!-- Initially visible for name/title, items inside toggle -->
+                            <div class="preview-blk-title" id="about_title_preview_blk" style="display: none;"> <!-- Title toggles -->
+                                <h3>About</h3>
+                            </div>
+                            <div class="preview-blk-list">
+                                <div class="preview-item" id="phoneno_dsp_item" style="display: none;">
+                                    <i class="fas fa-phone"></i>
+                                    <span class="preview-item-val" id="phoneno_dsp"></span>
+                                </div>
+                                <div class="preview-item" id="email_dsp_item" style="display: none;">
+                                    <i class="fas fa-envelope"></i>
+                                    <span class="preview-item-val" id="email_dsp"></span>
+                                </div>
+                                <div class="preview-item" id="address_dsp_item" style="display: none;">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span class="preview-item-val" id="address_dsp"></span>
+                                </div>
+                                <div class="preview-item" id="linkedin_dsp_item" style="display: none;">
+                                    <i class="fab fa-linkedin"></i>
+                                    <a href="#" id="linkedin_dsp_link" target="_blank" style="color: inherit; text-decoration: none;">
+                                        <span class="preview-item-val" id="linkedin_dsp"></span>
+                                    </a>
+                                </div>
+                                <div class="preview-item" id="summary_dsp_item" style="display: none;">
+                                    <span class="preview-item-val" id="summary_dsp"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-blk" id="skills_preview_blk" style="display: none;">
+                            <div class="preview-blk-title">
+                                <h3>Skills</h3>
+                            </div>
+                            <div class="skills-items preview-blk-list" id="skills_dsp">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="preview-cnt-r">
+                        <div class="preview-blk" id="achievements_preview_blk" style="display: none;">
+                            <div class="preview-blk-title">
+                                <h3>Achievements</h3>
+                            </div>
+                            <div class="achievements-items preview-blk-list" id="achievements_dsp">
+                            </div>
+                        </div>
+
+                        <div class="preview-blk" id="education_preview_blk" style="display: none;">
+                            <div class="preview-blk-title">
+                                <h3>Education</h3>
+                            </div>
+                            <div class="educations-items preview-blk-list" id="educations_dsp">
+                            </div>
+                        </div>
+
+                        <div class="preview-blk" id="experience_preview_blk" style="display: none;">
+                            <div class="preview-blk-title">
+                                <h3>Experience</h3>
+                            </div>
+                            <div class="experiences-items preview-blk-list" id="experiences_dsp">
+                            </div>
+                        </div>
+
+                        <div class="preview-blk" id="projects_preview_blk" style="display: none;">
+                            <div class="preview-blk-title">
+                                <h3>Projects</h3>
+                            </div>
+                            <div class="projects-items preview-blk-list" id="projects_dsp">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            console.log("Document Ready: Initializing repeaters and event listeners.");
+
+            function initRepeater(selector) {
+                console.log("Initializing repeater for:", selector);
+                $(selector).repeater({
+                    show: function() {
+                        console.log("Repeater Item Show:", selector, $(this));
+                        $(this).slideDown();
+                        updatePreview(); 
+                    },
+                    hide: function(deleteElement) {
+                        console.log("Repeater Item Hide:", selector, $(this));
+                        // Crucial: Ensure DOM removal before updatePreview if relying on item count
+                        var $itemToRemove = $(this);
+                        $itemToRemove.slideUp(deleteElement, function() {
+                            $itemToRemove.remove(); 
+                            updatePreview(); 
+                        });
+                    },
+                    ready: function() {
+                        console.log("Repeater Ready:", selector);
+                        // updatePreview(); // Call if you have default items in repeaters
+                    }
+                });
+            }
+
+            initRepeater('#achievements-repeater');
+            initRepeater('#experience-repeater');
+            initRepeater('#education-repeater');
+            initRepeater('#projects-repeater');
+            initRepeater('#skills-repeater');
+
+            $(document).on('input change', '.form-control', function(event) {
+                console.log("Form control event:", event.type, "on element with name:", $(this).attr('name') || "N/A", "Value:", $(this).val());
+                updatePreview();
+            });
+
+            console.log("Initial updatePreview call from document ready.");
+            updatePreview();
+        });
+
+        function updatePreview() {
+            console.log('%c--- updatePreview START ---', 'color: blue; font-weight: bold;');
+
+            // --- Personal Info ---
+            const firstName = $('#firstname').val();
+            const middleName = $('#middlename').val();
+            const lastName = $('#lastname').val();
+            const fullName = `${firstName || 'Your'} ${middleName || ''} ${lastName || 'Name'}`.replace(/\s+/g, ' ').trim();
+            $('#fullname_dsp').text(fullName);
+            $('#designation_dsp').text($('#designation').val() || 'Your Title');
+
+            let aboutBlockHasContent = false; // Flag to show the "About" title
+            let aboutSectionHasAnyContent = false; // Flag to show the entire "about_preview_blk"
+
+            const phoneVal = $('#phoneno').val();
+            $('#phoneno_dsp').text(phoneVal);
+            $('#phoneno_dsp_item').toggle(!!phoneVal);
+            if (phoneVal) { aboutBlockHasContent = true; aboutSectionHasAnyContent = true;}
+
+            const emailVal = $('#email').val();
+            $('#email_dsp').text(emailVal);
+            $('#email_dsp_item').toggle(!!emailVal);
+            if (emailVal) { aboutBlockHasContent = true; aboutSectionHasAnyContent = true;}
+
+            const addressVal = $('#address').val();
+            $('#address_dsp').text(addressVal);
+            $('#address_dsp_item').toggle(!!addressVal);
+            if (addressVal) { aboutBlockHasContent = true; aboutSectionHasAnyContent = true;}
+
+            const linkedinVal = $('#linkedin').val();
+            if (linkedinVal && linkedinVal.trim() !== '') {
+                $('#linkedin_dsp_link').attr('href', (linkedinVal.startsWith('http') ? linkedinVal : 'https://' + linkedinVal));
+                $('#linkedin_dsp').text(linkedinVal.replace(/^(https?:\/\/)?(www\.)?/, ''));
+                $('#linkedin_dsp_item').show();
+                aboutBlockHasContent = true; aboutSectionHasAnyContent = true;
+            } else {
+                $('#linkedin_dsp_item').hide();
+            }
+
+            const summaryVal = $('#summary').val();
+            $('#summary_dsp').html(summaryVal ? summaryVal.replace(/\n/g, '<br>') : '');
+            $('#summary_dsp_item').toggle(!!summaryVal);
+            if (summaryVal) { aboutBlockHasContent = true; aboutSectionHasAnyContent = true;}
+            
+            $('#about_title_preview_blk').toggle(aboutBlockHasContent); // Toggle "About" h3 title
+            // The #about_preview_blk (entire block including name/title) should always be visible if name/title is considered part of it.
+            // Or, if name/title is separate, then:
+            // $('#about_preview_blk').toggle(aboutSectionHasAnyContent); // This would hide name/title too if no contact/summary
+
+            // --- Skills ---
+            const skillsContainer = $('#skills_dsp');
+            skillsContainer.empty();
+            let hasSkills = false;
+            // console.log("Processing Skills. Number of skill items found in form:", $('[data-repeater-list="skills"] [data-repeater-item]').length);
+            $('[data-repeater-list="skills"] [data-repeater-item]').each(function(idx) {
+                const skillInput = $(this).find('input.skill');
+                const skill = skillInput.val();
+                // console.log(`Skill Item ${idx}: Value - "${skill}", Input found: ${skillInput.length > 0}`);
+                if (skill && skill.trim() !== '') {
+                    skillsContainer.append(`<span class="skill-tag">${skill.trim()}</span>`);
+                    hasSkills = true;
+                }
+            });
+            $('#skills_preview_blk').toggle(hasSkills);
+            // console.log("Skills Block Visible:", hasSkills, "Skills count:", skillsContainer.children().length);
+
+
+            // --- Achievements ---
+            const achievementsContainer = $('#achievements_dsp');
+            achievementsContainer.empty();
+            let hasAchievements = false;
+            $('[data-repeater-list="achievements"] [data-repeater-item]').each(function(idx) {
+                const title = $(this).find('input.achieve_title').val();
+                const description = $(this).find('input.achieve_description').val();
+                if (title || description) {
+                    hasAchievements = true;
+                    achievementsContainer.append(`
+                        <div class="achievement-item">
+                            <h4>${title || 'Achievement'}</h4>
+                            <p>${description || ''}</p>
+                        </div>`);
+                }
+            });
+            $('#achievements_preview_blk').toggle(hasAchievements);
+
+            // --- Experience ---
+            const experiencesContainer = $('#experiences_dsp');
+            experiencesContainer.empty();
+            let hasExperience = false;
+            $('[data-repeater-list="experience"] [data-repeater-item]').each(function(idx) {
+                const title = $(this).find('input.exp_title').val();
+                const company = $(this).find('input.exp_organization').val();
+                const location = $(this).find('input.exp_location').val();
+                const startDate = $(this).find('input.exp_start_date').val();
+                const endDate = $(this).find('input.exp_end_date').val();
+                const description = $(this).find('textarea.exp_description').val();
+                if (title || company) {
+                    hasExperience = true;
+                    let dateRange = startDate ? `${formatMonthYear(startDate)} - ${endDate ? formatMonthYear(endDate) : 'Present'}` : '';
+                    let companyInfo = company || 'Company';
+                    if (location) companyInfo += (companyInfo ? `, ${location}` : location);
+                    let descriptionHTML = (description && description.trim()) ? '<ul>' + description.split('\n').filter(l => l.trim()).map(l => `<li>${l.replace(/^- /, '').trim()}</li>`).join('') + '</ul>' : '';
+                    experiencesContainer.append(`
+                        <div class="experience-item">
+                            <h4>${title || 'Job Title'}</h4>
+                            <p>${companyInfo}${dateRange ? ` <span class="exp-dates">(${dateRange})</span>` : ''}</p>
+                            ${descriptionHTML}
+                        </div>`);
+                }
+            });
+            $('#experience_preview_blk').toggle(hasExperience);
+
+            // --- Education ---
+            const educationsContainer = $('#educations_dsp');
+            educationsContainer.empty();
+            let hasEducation = false;
+            $('[data-repeater-list="education"] [data-repeater-item]').each(function(idx) {
+                const school = $(this).find('input.edu_school').val();
+                const degree = $(this).find('input.edu_degree').val();
+                const city = $(this).find('input.edu_city').val();
+                const startDate = $(this).find('input.edu_start_date').val();
+                const endDate = $(this).find('input.edu_graduation_date').val();
+                const description = $(this).find('textarea.edu_description').val();
+                if (school || degree) {
+                    hasEducation = true;
+                    let dateRange = startDate ? `${formatMonthYear(startDate)} - ${endDate ? formatMonthYear(endDate) : 'Expected'}` : '';
+                    let schoolInfo = school || 'Institution';
+                    if (city) schoolInfo += (schoolInfo ? `, ${city}` : city);
+                    educationsContainer.append(`
+                        <div class="education-item">
+                            <h4>${degree || 'Degree'}</h4>
+                            <p>${schoolInfo}${dateRange ? ` <span class="edu-dates">(${dateRange})</span>` : ''}</p>
+                            ${(description && description.trim()) ? `<p>${description.replace(/\n/g, '<br>')}</p>` : ''}
+                        </div>`);
+                }
+            });
+            $('#education_preview_blk').toggle(hasEducation);
+
+            // --- Projects ---
+            const projectsContainer = $('#projects_dsp');
+            projectsContainer.empty();
+            let hasProjects = false;
+            $('[data-repeater-list="projects"] [data-repeater-item]').each(function(idx) {
+                const title = $(this).find('input.proj_title').val();
+                let link = $(this).find('input.proj_link').val();
+                const description = $(this).find('textarea.proj_description').val();
+                if (title) {
+                    hasProjects = true;
+                    let linkHTML = '';
+                    if (link && link.trim()) {
+                        if (!link.startsWith('http://') && !link.startsWith('https://')) link = 'https://' + link;
+                        linkHTML = `<p><a href="${link}" target="_blank">${link.replace(/^(https?:\/\/)?(www\.)?/, '')}</a></p>`;
+                    }
+                    let descriptionHTML = (description && description.trim()) ? '<ul>' + description.split('\n').filter(l => l.trim()).map(l => `<li>${l.replace(/^- /, '').trim()}</li>`).join('') + '</ul>' : '';
+                    projectsContainer.append(`
+                        <div class="project-item">
+                            <h4>${title}</h4>
+                            ${linkHTML}
+                            ${descriptionHTML}
+                        </div>`);
+                }
+            });
+            $('#projects_preview_blk').toggle(hasProjects);
+
+            console.log('%c--- updatePreview END ---', 'color: red; font-weight: bold;');
+        }
+
+        function formatMonthYear(dateString) {
+            if (!dateString) return '';
+            const [year, month] = dateString.split('-');
+            if (!year || !month) return dateString;
+            const date = new Date(parseInt(year), parseInt(month) - 1);
+            const options = { year: 'numeric', month: 'short' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function downloadPDF() {
+            // console.log("Download PDF called");
+            updatePreview();
+            const element = document.getElementById('resume-content');
+            const name = ($('#firstname').val() || 'resume') + '_' + ($('#lastname').val() || 'document');
+            const opt = {
+                margin: [10, 5, 10, 5],
+                filename: name.replace(/[^a-z0-9_.-]/gi, '_') + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, dpi: 192, letterRendering: true, backgroundColor: null },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'avoid-all'] }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+
+        function printCV() {
+            // console.log("Print CV called");
+            updatePreview();
+            window.print();
+        }
+    </script>
+</body>
+</html>

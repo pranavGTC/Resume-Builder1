@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Build Resume - Create Professional Resumes in Minutes</title>
+        <meta name="description" content="Create professional, recruiter-approved resumes in minutes with our free resume builder. Choose from multiple templates designed to get you hired.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        <!-- Assuming assets/css/main.css contains base styles and utility classes like text-uppercase, text-center, fs-14, etc. -->
+        <link rel="stylesheet" href="assets/css/main.css">
+        <!-- Load Font Awesome in the head -->
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <style>
+            :root {
+                --primary-color: #4361ee;
+                --secondary-color: #3f37c9;
+                --accent-color: #4cc9f0;
+                --dark-color: #1a1a2e;
+                --light-color: #f8f9fa;
+                --success-color: #4bb543;
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                overflow-x: hidden;
+            }
+
+            /* Container class (likely in main.css, but good practice to have) */
+            .container {
+                 max-width: 1140px;
+                 margin: 0 auto;
+                 padding: 0 15px;
+             }
+
+            .navbar {
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+                position: sticky;
+                top: 0;
+                z-index: 1000;
+                /* Using bg-white class from main.css presumably, fallback provided */
+                background: rgba(255,255,255,0.98);
+                backdrop-filter: blur(5px);
+                transition: padding 0.3s ease, box-shadow 0.3s ease;
+                padding: 15px 0;
+            }
+
+            .navbar.scrolled {
+                padding: 10px 0;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            }
+
+            /* Basic navbar structure assumed */
+            .navbar .container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            /* Removed navbar-content and brand-and-toggler wrappers if not strictly needed by main.css */
+            .navbar-brand {
+                display: flex;
+                align-items: center;
+                font-weight: 700;
+                font-size: 1.5rem;
+                color: var(--dark-color);
+                text-decoration: none;
+            }
+
+            .navbar-brand span span { /* Target the inner span for color */
+                color: var(--primary-color);
+            }
+
+            .navbar-brand-icon {
+                height: 40px;
+                margin-right: 10px;
+                transition: transform 0.3s ease;
+            }
+
+            .navbar-brand:hover .navbar-brand-icon {
+                transform: rotate(10deg);
+            }
+
+             /* Basic Toggler Styles (Add more if needed) */
+            .navbar-toggler-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                display: none; /* Hidden by default, shown in media query */
+                padding: 5px;
+            }
+            .navbar-toggler-btn .bar {
+                 display: block;
+                 width: 25px;
+                 height: 3px;
+                 background-color: var(--dark-color);
+                 margin: 5px 0;
+                 transition: all 0.3s ease;
+             }
+
+
+            .header {
+                padding: 5rem 0;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+                position: relative;
+                overflow: hidden;
+                text-align: center; /* Added for consistency */
+            }
+
+            .header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: url('assets/images/dots-pattern.png') repeat;
+                opacity: 0.05;
+                z-index: 0;
+            }
+
+            .header-content {
+                position: relative;
+                z-index: 1;
+                max-width: 900px; /* Limit width for better readability */
+                margin: 0 auto; /* Center content */
+            }
+
+            .btn {
+                padding: 12px 24px;
+                border-radius: 50px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                transition: all 0.3s ease;
+                border: none;
+                cursor: pointer;
+                margin: 10px 10px; /* Adjusted margin */
+                position: relative;
+                overflow: hidden;
+                display: inline-block; /* Ensure buttons align nicely */
+                text-decoration: none; /* For anchor tags styled as buttons */
+            }
+
+            .btn-primary {
+                background: var(--primary-color);
+                color: white;
+                box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+            }
+
+            .btn-primary:hover {
+                background: var(--secondary-color);
+                transform: translateY(-3px);
+                box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+            }
+
+            .btn-secondary {
+                background: white;
+                color: var(--primary-color);
+                border: 2px solid var(--primary-color);
+            }
+
+            .btn-secondary:hover {
+                background: var(--primary-color);
+                color: white;
+                transform: translateY(-3px);
+            }
+
+            .btn-group {
+                margin-top: 2rem;
+            }
+
+            .section-one {
+                padding: 5rem 0;
+                background: white;
+            }
+
+            .section-one-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 2rem; /* Add gap for spacing */
+            }
+
+            .section-one-l, .section-one-r {
+                flex: 1;
+                min-width: 300px;
+                /* Removed padding here, add to specific elements if needed */
+            }
+
+             .section-one-r.text-center { /* Ensure text-center works if defined */
+                text-align: center;
+             }
+
+            .section-one-l img {
+                max-width: 100%;
+                height: auto;
+                display: block; /* Prevent extra space below image */
+                margin: 0 auto; /* Center image if container is wider */
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .lg-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+                color: var(--dark-color);
+                line-height: 1.3;
+            }
+
+            .text {
+                font-size: 1.1rem;
+                color: #555;
+                max-width: 600px;
+                margin: 0 auto 2rem; /* Keep auto margins for centering */
+            }
+
+             /* Ensure text-center utility class works */
+             .text-center {
+                 text-align: center;
+             }
+
+            .section-two {
+                padding: 4rem 0;
+                background: linear-gradient(135deg, #e4e8f0 0%, #f5f7fa 100%);
+            }
+
+            .section-items {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .section-item {
+                background: white;
+                padding: 2.5rem 2rem;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                transition: all 0.3s ease;
+                flex: 1;
+                min-width: 250px;
+                max-width: 350px;
+                text-align: center;
+            }
+
+            .section-item:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            }
+
+            .section-item-icon {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto 1.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(67, 97, 238, 0.1);
+                border-radius: 50%;
+            }
+
+            .section-item-icon img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .section-item-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: var(--dark-color);
+                margin-bottom: 0.75rem; /* Add some space below title */
+            }
+
+            /* Added style for the paragraph inside section-item */
+            .section-item p {
+                font-size: 0.95rem;
+                color: #555;
+                line-height: 1.5;
+            }
+
+            footer {
+                padding: 3rem 0 2rem; /* Adjusted padding */
+                background: var(--dark-color);
+                color: rgba(255, 255, 255, 0.8); /* Slightly softer white */
+                text-align: center; /* Center footer content */
+            }
+
+            .footer-content .navbar-brand { /* Style footer logo link */
+                 justify-content: center; /* Center the logo */
+                 margin-bottom: 1.5rem;
+                 color: white;
+                 font-size: 1.8rem;
+             }
+            .footer-content .navbar-brand span span { /* Inner span color */
+                 color: var(--accent-color);
+             }
+
+            .footer-links {
+                margin-bottom: 1.5rem;
+            }
+            .footer-links a {
+                color: rgba(255, 255, 255, 0.8);
+                margin: 0 15px;
+                text-decoration: none;
+                transition: color 0.3s ease;
+                font-size: 0.95rem;
+            }
+            .footer-links a:hover {
+                color: var(--accent-color);
+            }
+
+            .footer-content p {
+                 /* Assuming fs-15 is font-size: 0.9375rem or 15px */
+                 font-size: 0.95rem;
+                 line-height: 1.6;
+                 margin-bottom: 1rem; /* Consistent spacing */
+            }
+            .footer-content p:last-child {
+                 margin-bottom: 0; /* No margin for the last paragraph */
+                 color: rgba(255, 255, 255, 0.6); /* Dimmer copyright */
+            }
+
+            .footer-content .highlight { /* Class for accent color span */
+                color: var(--accent-color);
+                font-weight: 600;
+            }
+
+            .template-gallery {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 2rem;
+                margin: 3rem 0;
+            }
+
+            .template-card {
+                width: 280px;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* Slightly softer shadow */
+                transition: all 0.3s ease;
+                background: white;
+                display: flex; /* Use flex for vertical alignment */
+                flex-direction: column; /* Stack elements vertically */
+            }
+
+            .template-card:hover {
+                transform: translateY(-8px); /* Slightly less lift */
+                box-shadow: 0 12px 35px rgba(0,0,0,0.1); /* Adjusted hover shadow */
+            }
+
+            .template-img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover; /* Changed to cover */
+                object-position: top center; /* Adjust as needed */
+                background: #f0f2f5; /* Slightly different background */
+                border-bottom: 1px solid #eee; /* Subtle separator */
+            }
+
+            .template-info {
+                padding: 1.5rem;
+                text-align: center;
+                flex-grow: 1; /* Allow info to grow */
+                display: flex; /* Use flex for content alignment */
+                flex-direction: column; /* Stack info content */
+                justify-content: space-between; /* Space out content */
+            }
+
+            .template-name {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: var(--dark-color);
+                font-size: 1.1rem;
+            }
+
+            .template-desc {
+                font-size: 0.9rem;
+                color: #666;
+                margin-bottom: 1.25rem; /* More space before button */
+                flex-grow: 1; /* Allow desc to take available space */
+            }
+
+            .template-info .btn-primary { /* Style button inside card */
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                width: 100%; /* Make button full width */
+                box-sizing: border-box; /* Include padding in width */
+            }
+
+            .testimonials {
+                padding: 4rem 0;
+                background: white;
+                text-align: center;
+            }
+
+            .testimonial-card {
+                background: var(--light-color);
+                padding: 2rem;
+                border-radius: 10px;
+                max-width: 650px; /* Slightly wider */
+                margin: 2rem auto 0; /* Add margin top */
+                box-shadow: 0 5px 20px rgba(0,0,0,0.07); /* Adjusted shadow */
+                border-left: 5px solid var(--primary-color); /* Add accent border */
+                text-align: left; /* Align text left for readability */
+            }
+
+            .testimonial-text {
+                font-style: italic;
+                margin-bottom: 1.5rem;
+                color: #444; /* Darker text */
+                font-size: 1.05rem; /* Slightly larger */
+                line-height: 1.7; /* Better line spacing */
+            }
+             /* Add quotes */
+            .testimonial-text::before {
+                content: '"';
+                font-size: 1.5em;
+                color: var(--primary-color);
+                opacity: 0.6;
+                margin-right: 5px;
+             }
+             .testimonial-text::after {
+                content: '"';
+                font-size: 1.5em;
+                color: var(--primary-color);
+                opacity: 0.6;
+                margin-left: 5px;
+             }
+
+            .testimonial-author {
+                font-weight: 600;
+                color: var(--primary-color);
+                text-align: right; /* Align author right */
+            }
+
+            /* Featured Section Styles */
+            .featured-section {
+                background: var(--light-color);
+                padding: 4rem 0; /* Reduced padding slightly */
+            }
+
+            .featured-logos {
+                display: flex;
+                justify-content: center;
+                align-items: center; /* Vertically align logos */
+                flex-wrap: wrap;
+                gap: 3rem; /* Spacing between logos */
+                opacity: 0.7;
+                filter: grayscale(50%); /* Optional: make logos less prominent */
+                transition: opacity 0.3s ease, filter 0.3s ease;
+            }
+            /* Optional hover effect */
+            /* .featured-logos:hover {
+                opacity: 0.9;
+                filter: grayscale(0%);
+            } */
+
+            .featured-logos img {
+                height: 35px; /* Slightly smaller logos */
+                width: auto;
+                max-width: 150px; /* Prevent logos from becoming too wide */
+            }
+
+
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-12px); } /* Reduced float height */
+                100% { transform: translateY(0px); }
+            }
+
+            /* Visibility class for animations */
+             .animate__animated[data-animation] {
+                 opacity: 0; /* Start hidden */
+             }
+
+            @media (max-width: 992px) {
+                 .lg-title {
+                     font-size: 2.2rem;
+                 }
+                 .header { padding: 4rem 0; }
+                 .section-one, .section-two, .testimonials, .featured-section { padding: 4rem 0; }
+             }
+
+            @media (max-width: 768px) {
+                .navbar .container {
+                    flex-wrap: wrap; /* Allow wrapping for toggler */
+                }
+                .navbar-toggler-btn {
+                    display: block; /* Show toggler on smaller screens */
+                }
+                /* Add styles for mobile menu if implementing */
+
+                .section-one-content {
+                    flex-direction: column;
+                    text-align: center; /* Center text when stacked */
+                }
+
+                .section-one-l, .section-one-r {
+                    flex: none;
+                    width: 100%;
+                    max-width: 450px; /* Limit width of image/text blocks */
+                    margin: 0 auto; /* Center blocks */
+                }
+                .section-one-r {
+                    margin-top: 2rem; /* Add space between image and text */
+                }
+
+                .btn {
+                    /* display: block; */ /* Keep inline-block for flexibility */
+                    width: auto; /* Allow button width to fit content */
+                    max-width: 80%; /* Limit max width */
+                    margin: 10px auto; /* Center button if needed */
+                }
+                 .header-content .btn { /* Ensure header buttons stack if needed */
+                    display: block;
+                    width: 80%;
+                    margin: 15px auto;
+                 }
+
+
+                .lg-title {
+                    font-size: 2rem;
+                }
+
+                .template-card {
+                    width: calc(50% - 1rem); /* Two cards per row */
+                    max-width: none;
+                }
+                 .template-gallery {
+                     gap: 1rem; /* Reduce gap */
+                 }
+
+                 .featured-logos {
+                     gap: 2rem; /* Reduce gap */
+                 }
+                 .featured-logos img {
+                    height: 30px;
+                 }
+            }
+
+            @media (max-width: 576px) {
+                .header { padding: 3rem 0; }
+                .section-one, .section-two, .testimonials, .featured-section { padding: 3rem 0; }
+                .lg-title { font-size: 1.8rem; }
+                .text { font-size: 1rem; }
+                .template-card {
+                     width: 100%; /* One card per row */
+                     max-width: 350px;
+                     margin: 0 auto;
+                 }
+                 .template-gallery {
+                     gap: 1.5rem; /* Adjust gap for single column */
+                 }
+                 .footer-links a {
+                    margin: 0 8px; /* Reduce spacing */
+                    display: inline-block; /* Prevent awkward wrapping */
+                    margin-bottom: 10px;
+                 }
+             }
+        </style>
+    </head>
+    <body>
+        <!-- Navbar -->
+        <!-- Using 'bg-white' utility class, ensure it's defined in main.css -->
+        <nav class="navbar bg-white">
+            <div class="container">
+                 <a href="index.html" class="navbar-brand">
+                    <img src="assets/images/curriculum-vitae.png" alt="Resume Builder Logo Icon" class="navbar-brand-icon">
+                    <!-- Using 'navbar-brand-text' utility class -->
+                    <span class="navbar-brand-text">build <span>resume.</span></span>
+                </a>
+                <!-- Toggler Button (Functionality added in JS) -->
+                <button type="button" class="navbar-toggler-btn" aria-label="Toggle navigation">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+                <!-- Add Navigation Links here if implementing toggle -->
+                 <!-- <div class="navbar-collapse"> ... links ... </div> -->
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <!-- Removed redundant 'bg-bright' class -->
+        <header class="header" id="header">
+            <div class="container">
+                <div class="header-content">
+                    <!-- Using utility classes (text-uppercase, etc.) defined in main.css -->
+                    <h6 class="text-uppercase text-blue-dark fs-14 fw-6 ls-1 animate__animated" data-animation="animate__fadeIn">online resume builder</h6>
+                    <h1 class="animate__animated" data-animation="animate__fadeInUp" style="font-size: 3rem; font-weight: 800; margin: 1rem 0; color: var(--dark-color); animation-delay: 0.2s;">Create Your Professional Resume in Minutes</h1>
+                    <p class="animate__animated" data-animation="animate__fadeInUp" style="max-width: 700px; margin: 0 auto 2rem; font-size: 1.2rem; animation-delay: 0.4s;">Stand out from the crowd with our recruiter-approved resume templates designed to get you hired faster.</p>
+
+                    <!-- Template Gallery -->
+                    <div class="template-gallery animate__animated" data-animation="animate__fadeInUp" style="animation-delay: 0.6s;">
+                        <div class="template-card">
+                            <img src="assets/images/professional-template.jpg" alt="Clean professional resume template preview" class="template-img">
+                            <div class="template-info">
+                                <div> <!-- Wrapper for name/desc -->
+                                    <h3 class="template-name">Professional</h3>
+                                    <p class="template-desc">Clean, modern design perfect for corporate jobs</p>
+                                </div>
+                                <a href="resume.html" class="btn btn-primary">Use This Template</a>
+                            </div>
+                        </div>
+
+                        <div class="template-card">
+                            <img src="assets/images/ats-template.jpg" alt="ATS friendly resume template preview" class="template-img">
+                            <div class="template-info">
+                                <div>
+                                    <h3 class="template-name">ATS Friendly</h3>
+                                    <p class="template-desc">Optimized to pass automated tracking systems</p>
+                                </div>
+                                <a href="ats-resume.html" class="btn btn-primary">Use This Template</a>
+                            </div>
+                        </div>
+
+                        <div class="template-card">
+                            <img src="assets/images/creative-template.jpg" alt="Creative resume template preview" class="template-img">
+                            <div class="template-info">
+                                <div>
+                                    <h3 class="template-name">Creative</h3>
+                                    <p class="template-desc">For designers and creative professionals</p>
+                                </div>
+                                <a href="Resume3.html" class="btn btn-primary">Use This Template</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Learn More Button -->
+                    <div class="animate__animated" data-animation="animate__fadeInUp" style="animation-delay: 0.8s;">
+                        <a href="#features" class="btn btn-secondary" style="margin-top: 2rem;">
+                            Learn More <i class="fas fa-arrow-down" style="margin-left: 8px;"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section One: Introduction -->
+        <div class="section-one">
+            <div class="container">
+                <div class="section-one-content">
+                    <div class="section-one-l animate__animated" data-animation="animate__fadeInLeft">
+                        <img src="assets/images/resume-illustration.svg" alt="Illustration of a person building a resume on a computer">
+                    </div>
+                    <!-- Assuming text-center is defined in main.css -->
+                    <div class="section-one-r text-center animate__animated" data-animation="animate__fadeInRight">
+                        <h2 class="lg-title">Use the best resume maker as your guide!</h2>
+                        <p class="text">Getting that dream job can seem like an impossible task. We're here to change that. Give yourself a real advantage with the best online resume maker: created by experts, improved by data, trusted by millions of professionals.</p>
+                        <div class="btn-group">
+                            <!-- Assuming text-uppercase is defined in main.css -->
+                            <a href="resume.html" class="btn btn-primary text-uppercase">create my resume</a>
+                            <!-- <a href = "#" class = "btn btn-secondary text-uppercase">watch video</a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Two: Features -->
+        <!-- Removed redundant 'bg-bright' class -->
+        <div class="section-two" id="features">
+            <div class="container">
+                <!-- Assuming text-center is defined in main.css -->
+                <div class="text-center" style="margin-bottom: 3rem;">
+                    <h2 class="lg-title animate__animated" data-animation="animate__fadeIn">Why Choose Our Resume Builder?</h2>
+                    <p class="text animate__animated" data-animation="animate__fadeIn" style="max-width: 700px; margin: 0 auto; animation-delay: 0.2s;">We combine beautiful design with powerful functionality to help you land interviews</p>
+                </div>
+
+                <div class="section-two-content">
+                    <div class="section-items">
+                        <!-- Feature Item 1 -->
+                        <div class="section-item animate__animated" data-animation="animate__fadeInUp" style="animation-delay: 0.3s;">
+                            <div class="section-item-icon">
+                                <img src="assets/images/interview-icon.svg" alt="Interview winning icon">
+                            </div>
+                            <h5 class="section-item-title">Make a resume that wins interviews!</h5>
+                            <p>Our templates are designed by HR professionals to highlight your strengths effectively.</p>
+                        </div>
+
+                        <!-- Feature Item 2 -->
+                        <div class="section-item animate__animated" data-animation="animate__fadeInUp" style="animation-delay: 0.5s;">
+                            <div class="section-item-icon">
+                                <img src="assets/images/easy-writing-icon.svg" alt="Easy writing icon">
+                            </div>
+                            <h5 class="section-item-title">Resume writing made easy!</h5>
+                            <p>Step-by-step guidance with pre-written examples for any job title.</p>
+                        </div>
+
+                        <!-- Feature Item 3 -->
+                        <div class="section-item animate__animated" data-animation="animate__fadeInUp" style="animation-delay: 0.7s;">
+                            <div class="section-item-icon">
+                                <img src="assets/images/recruiter-icon.svg" alt="Recruiter tested icon">
+                            </div>
+                            <h5 class="section-item-title">A recruiter-tested CV maker tool</h5>
+                            <p>Trusted by hiring managers at top companies worldwide.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonials Section -->
+        <div class="testimonials">
+            <div class="container">
+                <!-- Assuming text-center is defined in main.css -->
+                <h2 class="lg-title text-center animate__animated" data-animation="animate__fadeIn">What Our Users Say</h2>
+                <div class="testimonial-card animate__animated" data-animation="animate__fadeInUp" style="animation-delay: 0.3s;">
+                    <p class="testimonial-text">I landed 3 interviews in the first week after using this resume builder. The ATS-friendly template made all the difference!</p>
+                    <p class="testimonial-author">- Sarah K., Marketing Professional</p>
+                </div>
+                <!-- Add more testimonial cards if needed -->
+            </div>
+        </div>
+
+        <!-- Featured In Section -->
+        <!-- Renamed class for clarity -->
+        <div class="featured-section">
+            <div class="container">
+                <!-- Assuming text-center is defined in main.css -->
+                <div class="text-center" style="margin-bottom: 3rem;">
+                    <h2 class="lg-title animate__animated" data-animation="animate__fadeIn">As Featured In</h2>
+                </div>
+                <!-- Renamed class for clarity -->
+                <div class="featured-logos animate__animated" data-animation="animate__fadeIn" style="animation-delay: 0.3s;">
+                    <!-- Ensure image paths are correct -->
+                    <img src="assets/images/forbes-logo.png" alt="Forbes logo">
+                    <img src="assets/images/techcrunch-logo.png" alt="TechCrunch logo">
+                    <img src="assets/images/entrepreneur-logo.png" alt="Entrepreneur logo">
+                    <!-- Add more logos as needed -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <!-- Using 'bg-dark' utility class, ensure it's defined in main.css -->
+        <footer class="footer bg-dark">
+            <div class="container">
+                <div class="footer-content">
+                    <!-- Footer Logo -->
+                    <div class="animate__animated" data-animation="animate__fadeIn">
+                        <a href="index.html" class="navbar-brand">
+                            <!-- Ensure image path is correct -->
+                            <img src="assets/images/curriculum-vitae.png" alt="Resume Builder Logo Icon" class="navbar-brand-icon">
+                            <!-- Using utility class 'navbar-brand-text' -->
+                            <span class="navbar-brand-text">build <span class="highlight">resume.</span></span>
+                        </a>
+                    </div>
+                    <!-- Footer Links -->
+                    <div class="footer-links animate__animated" data-animation="animate__fadeIn" style="animation-delay: 0.2s;">
+                        <a href="#">About</a>
+                        <a href="#">Templates</a>
+                        <a href="#">Pricing</a>
+                        <a href="#">Contact</a>
+                    </div>
+                    <!-- Footer Text -->
+                    <!-- Assuming fs-15 class is defined in main.css -->
+                    <p class="fs-15 animate__animated" data-animation="animate__fadeIn" style="animation-delay: 0.4s;">Join over 5 million people who've landed jobs with our resumes</p>
+                    <p class="fs-15 animate__animated" data-animation="animate__fadeIn" style="animation-delay: 0.6s;">©Copyright <span id="copyright-year"></span>. All Rights Reserved - <span class="highlight">build.resume</span></p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <!-- Removed unused html2pdf.js unless needed for this specific landing page -->
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
+
+        <script>
+            // Navbar scroll effect
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Animation on scroll - CORRECTED LOGIC
+            const animatedElements = document.querySelectorAll('.animate__animated[data-animation]');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animationClass = entry.target.dataset.animation;
+                        if (animationClass) {
+                             // Make element visible before adding animation class
+                            entry.target.style.opacity = '1';
+                            entry.target.classList.add(animationClass);
+                        }
+                        // Optional: Keep delay from inline style or add via JS
+                        // const delay = entry.target.style.animationDelay;
+                        // if(delay) entry.target.style.animationDelay = delay;
+
+                        observer.unobserve(entry.target); // Stop observing once animated
+                    }
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% visible
+            });
+
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+
+            // Set dynamic copyright year
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+            // Basic Navbar Toggler Functionality (Example)
+            const toggler = document.querySelector('.navbar-toggler-btn');
+            // Assuming you have a div with links to toggle, e.g., <div class="navbar-collapse">...</div>
+            // const navCollapse = document.querySelector('.navbar-collapse');
+
+            if (toggler /* && navCollapse */) { // Check if elements exist
+                 toggler.addEventListener('click', () => {
+                    // Toggle an 'active' class on the menu or body
+                     // navCollapse.classList.toggle('active');
+                     // Or toggle classes on the bars for an 'X' icon
+                     toggler.classList.toggle('active'); // Add CSS for .navbar-toggler-btn.active
+                     console.log("Toggler clicked - Implement menu toggle logic here"); // Placeholder
+                 });
+            }
+
+        </script>
+    </body>
+</html>
